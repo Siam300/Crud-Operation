@@ -7,7 +7,7 @@ from rest_framework import status
 
 # Create your views here.
 @api_view(['GET', 'POST'])
-def product_list(request):
+def product_list(request, format = None):
     if request.method == 'GET':
 
         #Get all of the produts or list of all products
@@ -23,9 +23,11 @@ def product_list(request):
             serializer.save()
 
             return Response(serializer.data)
+        
+        return Response(status = status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET', 'PUT', 'DELETE'])   
-def product(request, pk):
+def product(request, pk, format = None):
     try:
         product = Product.objects.get(id = pk)
     
@@ -37,14 +39,16 @@ def product(request, pk):
 
         return Response(serializer.data)
     
-    if request.method == 'PUT':
+    elif request.method == 'PUT':
         serializer = ProductSerializer(product, data = request.data)
         if serializer.is_valid():
             serializer.save()
 
             return Response(serializer.data)
         
-    if request.method == 'DELETE':
+        return Response(status = status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
         product.delete()
 
         return Response(status = status.HTTP_204_NO_CONTENT)
